@@ -28,8 +28,10 @@
     }
     header{
       padding:80px 20px;
-      background:linear-gradient(135deg, rgba(61,139,95,0.85), rgba(212,112,79,0.75)),
-      url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=80') center/cover;
+      background:linear-gradient(135deg, rgba(61,139,95,0.85), rgba(212,112,79,0.75));
+      background-image:linear-gradient(135deg, rgba(61,139,95,0.85), rgba(212,112,79,0.75)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%2345a961;stop-opacity:0.1" /><stop offset="100%" style="stop-color:%23d4704f;stop-opacity:0.1" /></linearGradient></defs><rect fill="url(%23grad)" width="1200" height="600"/></svg>');
+      background-size:cover;
+      background-position:center;
       color:#fff;
       text-align:center;
       position:relative;
@@ -172,11 +174,24 @@
       border-radius:20px;
       overflow:hidden;
       box-shadow:0 12px 40px rgba(45,45,45,0.15);
+      position:relative;
+      background:#f0f0f0;
+      min-height:300px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
     .image-section img{
       width:100%;
       height:auto;
       display:block;
+      object-fit:cover;
+    }
+    .image-placeholder{
+      text-align:center;
+      color:var(--muted);
+      padding:40px 20px;
+      font-style:italic;
     }
     .image-caption{
       background:#f5f1e8;
@@ -260,6 +275,90 @@
     .feature-card h3{
       margin-top:0;
     }
+    .edit-button{
+      position:fixed;
+      bottom:30px;
+      right:30px;
+      background:var(--warm);
+      color:white;
+      border:none;
+      padding:15px 20px;
+      border-radius:50px;
+      cursor:pointer;
+      font-family:'Poppins', sans-serif;
+      font-weight:600;
+      box-shadow:0 8px 24px rgba(212,112,79,0.3);
+      transition:all 0.3s ease;
+      z-index:50;
+    }
+    .edit-button:hover{
+      background:#c25d3f;
+      transform:scale(1.05);
+      box-shadow:0 12px 32px rgba(212,112,79,0.4);
+    }
+    .edit-modal{
+      display:none;
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(0,0,0,0.7);
+      z-index:200;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .edit-modal.active{
+      display:flex;
+    }
+    .edit-modal-content{
+      background:white;
+      border-radius:24px;
+      padding:40px;
+      max-width:600px;
+      width:100%;
+      max-height:80vh;
+      overflow-y:auto;
+      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    }
+    .edit-modal h3{
+      margin-top:0;
+      color:var(--accent-dark);
+    }
+    .edit-modal textarea{
+      width:100%;
+      height:200px;
+      padding:12px;
+      border:2px solid var(--line);
+      border-radius:12px;
+      font-family:monospace;
+      font-size:0.9rem;
+      resize:vertical;
+      margin:16px 0;
+    }
+    .edit-modal button{
+      background:var(--accent);
+      color:white;
+      border:none;
+      padding:12px 24px;
+      border-radius:8px;
+      cursor:pointer;
+      font-family:'Poppins', sans-serif;
+      font-weight:600;
+      margin-right:12px;
+      transition:all 0.3s ease;
+    }
+    .edit-modal button:hover{
+      background:var(--accent-dark);
+    }
+    .edit-modal button.cancel{
+      background:#ccc;
+      color:#333;
+    }
+    .edit-modal button.cancel:hover{
+      background:#999;
+    }
     @media(max-width:768px){
       header{padding:60px 20px}
       header h1{font-size:2.2rem}
@@ -267,6 +366,7 @@
       h2{font-size:1.8rem}
       nav{gap:8px}
       nav a{padding:8px 14px;font-size:0.9rem}
+      .edit-button{bottom:20px;right:20px;padding:12px 16px;font-size:0.9rem}
     }
   </style>
 </head>
@@ -288,8 +388,9 @@
   <main>
     <section id="problem">
       <h2>The Problem with Turf Grass</h2>
-      <div class="image-section">
-        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=80" alt="Manicured lawn">
+      <div class="image-section" onclick="editImage(this)">
+        <div class="image-placeholder">🖼️ Click to add image URL (Manicured lawn)</div>
+        <img style="display:none" src="" alt="Manicured lawn">
         <div class="image-caption">Traditional manicured lawns are beautiful but ecologically limited</div>
       </div>
       <div class="grid">
@@ -310,8 +411,9 @@
 
     <section id="wildlife">
       <h2>How Biodiversity Helps Wildlife</h2>
-      <div class="image-section">
-        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80" alt="Wildflower meadow with butterflies">
+      <div class="image-section" onclick="editImage(this)">
+        <div class="image-placeholder">🖼️ Click to add image URL (Wildflower meadow)</div>
+        <img style="display:none" src="" alt="Wildflower meadow with butterflies">
         <div class="image-caption">Rich biodiversity creates a feast for pollinators and wildlife</div>
       </div>
       <p>Native plants support more life because they coevolved with local insects, birds, and other animals over thousands of years. A richer mix of plants creates food, nesting sites, and seasonal blooms that keep ecosystems functioning.</p>
@@ -339,8 +441,9 @@
 
     <section id="alternatives">
       <h2>Better Landscape Ideas</h2>
-      <div class="image-section">
-        <img src="https://images.unsplash.com/photo-1516912481808-846ec9b29e85?auto=format&fit=crop&w=1200&q=80" alt="Native garden design">
+      <div class="image-section" onclick="editImage(this)">
+        <div class="image-placeholder">🖼️ Click to add image URL (Native garden design)</div>
+        <img style="display:none" src="" alt="Native garden design">
         <div class="image-caption">A layered native garden with diverse plants and textures</div>
       </div>
       <div class="grid">
@@ -361,8 +464,9 @@
 
     <section id="steps">
       <h2>What You Can Do Today</h2>
-      <div class="image-section">
-        <img src="https://images.unsplash.com/photo-1464207687429-7505649dae38?auto=format&fit=crop&w=1200&q=80" alt="Person planting native flowers">
+      <div class="image-section" onclick="editImage(this)">
+        <div class="image-placeholder">🖼️ Click to add image URL (Person planting)</div>
+        <img style="display:none" src="" alt="Person planting native flowers">
         <div class="image-caption">Getting started with native plants is rewarding and impactful</div>
       </div>
       <ul>
@@ -390,5 +494,106 @@
   <footer>
     <p>Built as an educational resource about nature, biodiversity, and healthier landscaping practices. Together, we can transform our neighborhoods into thriving ecosystems.</p>
   </footer>
+
+  <button class="edit-button" onclick="toggleEditMode()">✏️ Edit Content</button>
+
+  <div class="edit-modal" id="editModal">
+    <div class="edit-modal-content">
+      <h3>Edit Website Content</h3>
+      <p>Paste your entire HTML code here to update the website:</p>
+      <textarea id="htmlContent" placeholder="Paste your HTML code here..."></textarea>
+      <button onclick="saveChanges()">Save Changes</button>
+      <button class="cancel" onclick="toggleEditMode()">Cancel</button>
+      <hr>
+      <h4>Or add image URLs:</h4>
+      <p><strong>Paste image URLs directly:</strong></p>
+      <textarea id="imageUrls" placeholder="https://example.com/image1.jpg
+https://example.com/image2.jpg
+https://example.com/image3.jpg
+https://example.com/image4.jpg" rows="6"></textarea>
+      <button onclick="loadImages()">Load Images</button>
+    </div>
+  </div>
+
+  <script>
+    let currentImageSection = null;
+
+    function toggleEditMode() {
+      const modal = document.getElementById('editModal');
+      modal.classList.toggle('active');
+      if (modal.classList.contains('active')) {
+        document.getElementById('htmlContent').value = document.documentElement.outerHTML;
+      }
+    }
+
+    function saveChanges() {
+      const newHtml = document.getElementById('htmlContent').value;
+      const blob = new Blob([newHtml], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      a.click();
+      alert('HTML file downloaded! You can now edit it in Notepad and re-upload.');
+      toggleEditMode();
+    }
+
+    function editImage(element) {
+      currentImageSection = element;
+      const modal = document.getElementById('editModal');
+      document.getElementById('imageUrls').value = '';
+      modal.classList.add('active');
+    }
+
+    function loadImages() {
+      const urls = document.getElementById('imageUrls').value.split('\n').filter(url => url.trim());
+      const imageSections = document.querySelectorAll('.image-section');
+      
+      urls.forEach((url, index) => {
+        if (imageSections[index]) {
+          const img = imageSections[index].querySelector('img');
+          const placeholder = imageSections[index].querySelector('.image-placeholder');
+          url = url.trim();
+          img.src = url;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+        }
+      });
+      
+      alert('Images loaded! These changes are temporary. Download the updated HTML to save permanently.');
+      toggleEditMode();
+    }
+
+    // Local storage to save images between sessions
+    window.addEventListener('load', () => {
+      const savedImages = localStorage.getItem('siteImages');
+      if (savedImages) {
+        const urls = JSON.parse(savedImages);
+        const imageSections = document.querySelectorAll('.image-section');
+        urls.forEach((url, index) => {
+          if (imageSections[index] && url) {
+            const img = imageSections[index].querySelector('img');
+            const placeholder = imageSections[index].querySelector('.image-placeholder');
+            img.src = url;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+          }
+        });
+      }
+    });
+
+    function saveImagesToStorage() {
+      const urls = [];
+      document.querySelectorAll('.image-section img').forEach(img => {
+        urls.push(img.src);
+      });
+      localStorage.setItem('siteImages', JSON.stringify(urls));
+    }
+
+    // Save images to storage when they load
+    document.querySelectorAll('.image-section img').forEach(img => {
+      img.addEventListener('load', saveImagesToStorage);
+    });
+  </script>
 </body>
 </html>
